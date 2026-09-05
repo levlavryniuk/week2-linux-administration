@@ -13,14 +13,15 @@ timestamp to ~/backup.log.
 
 Runs daily at 14:15 (system local time, EEST):
 
-15 14 * * * /home/levi/University/cloud-and-devops-fundamentals/week2-linux-administration/backup.sh /home/levi/Documents
+15 14 ** * /home/levi/University/cloud-and-devops-fundamentals/week2-linux-administration/backup.sh /home/levi/Documents
 
 Fields:
+
 - 15       minute (run at :15)
 - 14       hour (at 14:15)
-- *        every day of month
-- *        every month
-- *        every weekday
+- -        every day of month
+- -        every month
+- -        every weekday
 
 Install with: crontab -e, then verify with crontab -l.
 
@@ -35,8 +36,7 @@ Install with: crontab -e, then verify with crontab -l.
 Inspected NetworkManager.service with systemctl status and
 journalctl -u NetworkManager.service -n 15.
 
-Recent NetworkManager log entries show the wifi device wlan0 cycling through
-supplicant states (disconnected -> inactive -> interface_disabled) and
-rotating its hardware (MAC) address during scans. This is normal: NetworkManager
-is background-scanning for networks with MAC randomisation enabled, with no
-errors or failed transitions in the log.
+The log shows my wifi (wlan0) connecting and disconnecting and changing its
+MAC address from time to time. This is normal: NetworkManager regularly scans
+for wifi networks and picks a new random MAC address each time, and there are
+no errors in the log.
