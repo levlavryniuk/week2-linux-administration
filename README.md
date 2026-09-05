@@ -1,53 +1,42 @@
-# Week 2 Homework — Linux Administration & Shell Scripting
+# Week 2 - Linux Administration & Shell Scripting
 
-## 1. `backup.sh`
+## backup.sh
 
-`backup.sh <directory>` validates the argument, then creates a timestamped
-`.tar.gz` archive in the current directory (e.g. `docs_20260905_150141.tar.gz`).
+Usage: ./backup.sh <directory>
 
-- `set -euo pipefail` — exits on errors, unset variables, and failed pipes
-- Every variable is quoted
-- Invalid input → clear message on stderr + `exit 1`
-- Every run (success **and** failure) is logged with a timestamp to `~/backup.log`
+Validates the argument, then creates <name>_<timestamp>.tar.gz in the current
+directory. set -euo pipefail is on, all variables quoted, invalid input exits 1
+with a message on stderr. Every run (success or failure) is logged with a
+timestamp to ~/backup.log.
 
-## 2. Crontab line
+## Crontab
 
 Runs daily at 14:15 (system local time, EEST):
 
-```cron
-# ┌───────── minute (0–59)        → 15: run at minute 15
-# │ ┌─────── hour (0–23)          → 14: at 14:15 daily (EEST)
-# │ │ ┌───── day of month (1–31)  → *: every day
-# │ │ │ ┌─── month (1–12)         → *: every month
-# │ │ │ │ ┌─ day of week (0–7)    → *: every weekday (0 and 7 = Sunday)
 15 14 * * * /home/levi/University/cloud-and-devops-fundamentals/week2-linux-administration/backup.sh /home/levi/Documents
-```
 
-To install:
+Fields:
+- 15       minute (run at :15)
+- 14       hour (at 14:15)
+- *        every day of month
+- *        every month
+- *        every weekday
 
-```bash
-crontab -e   # paste the line above
-crontab -l   # verify it was saved
-```
+Install with: crontab -e, then verify with crontab -l.
 
-## 3. Sample log output
+## Sample log output
 
-Produced by testing the script (success, missing directory, missing argument):
-
-```text
 [2026-09-05 15:07:28] SUCCESS: backed up demo-src to demo-src_20260905_150728.tar.gz
 [2026-09-05 15:07:28] FAILED: invalid input
 [2026-09-05 15:07:28] FAILED: invalid input
-```
 
-## 4. Service log analysis (`systemctl` + `journalctl`)
+## Service log analysis (systemctl + journalctl)
 
-Inspected with `systemctl status NetworkManager.service` and
-`journalctl -u NetworkManager.service -n 15`.
+Inspected NetworkManager.service with systemctl status and
+journalctl -u NetworkManager.service -n 15.
 
-Recent `NetworkManager` log entries show the Wi-Fi device `wlan0` cycling
-through supplicant states (`disconnected → inactive → interface_disabled`)
-and rotating its hardware (MAC) address during scans. This is normal,
-expected behaviour: NetworkManager is background-scanning for available
-networks with MAC randomisation enabled, and there are no errors or failed
-state transitions in the log.
+Recent NetworkManager log entries show the wifi device wlan0 cycling through
+supplicant states (disconnected -> inactive -> interface_disabled) and
+rotating its hardware (MAC) address during scans. This is normal: NetworkManager
+is background-scanning for networks with MAC randomisation enabled, with no
+errors or failed transitions in the log.
