@@ -3,13 +3,12 @@
 ## 1. `backup.sh`
 
 `backup.sh <directory>` validates the argument, then creates a timestamped
-`.tar.gz` archive next to the source directory (e.g. `docs_20260905_150141.tar.gz`).
+`.tar.gz` archive in the current directory (e.g. `docs_20260905_150141.tar.gz`).
 
 - `set -euo pipefail` — exits on errors, unset variables, and failed pipes
 - Every variable is quoted
 - Invalid input → clear message on stderr + `exit 1`
-- Every run (success **and** failure) is logged with a timestamp to
-  `/var/log/backup.log` (falls back to `~/backup.log` when not writable by the user)
+- Every run (success **and** failure) is logged with a timestamp to `~/backup.log`
 
 ## 2. Crontab line
 
@@ -36,9 +35,9 @@ crontab -l   # verify it was saved
 Produced by testing the script (success, missing directory, missing argument):
 
 ```text
-[2026-09-05 15:01:41] SUCCESS: backed up '/tmp/demo-src' to '/tmp/demo-src_20260905_150141.tar.gz'
-[2026-09-05 15:01:41] FAILED: '/nonexistent' is not an existing directory
-[2026-09-05 15:01:41] FAILED: expected exactly 1 argument (a directory path)
+[2026-09-05 15:07:28] SUCCESS: backed up demo-src to demo-src_20260905_150728.tar.gz
+[2026-09-05 15:07:28] FAILED: invalid input
+[2026-09-05 15:07:28] FAILED: invalid input
 ```
 
 ## 4. Service log analysis (`systemctl` + `journalctl`)
